@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/sync_button"
+            android:layout_width="142dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/sync_contacts_bg"
+            android:padding="8dp"
+            android:text="Sync Contacts"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="Progress..."
+            android:textAlignment="center"
+            android:textColor="#038008"
+            android:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/delete_btn"
+            android:layout_width="142dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42dp"
+            android:background="@drawable/delete_contacts_bg"
+            android:padding="8dp"
+            android:text="Delete Contacts"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sync_button" />
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
