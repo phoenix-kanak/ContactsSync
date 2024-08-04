@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -12,10 +13,14 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.firestore.FirebaseFirestore
+import java.time.LocalDate
 
 class MainActivity : AppCompatActivity() {
     private val PERMISSIONS_REQUEST_WRITE_CONTACTS = 100
@@ -23,10 +28,14 @@ class MainActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var progressBar: ProgressBar
     private lateinit var progressText: TextView
+    private val handler = Handler(Looper.getMainLooper())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar_colour)
+        supportActionBar?.title = "Contacts Sync"
         btnSyncContacts = findViewById(R.id.sync_button)
         progressBar = findViewById(R.id.progressBar)
         progressText = findViewById(R.id.progressText)
@@ -99,7 +108,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handlePermissionDenied() {
-        // Notify the user that permissions are required and cannot proceed
         android.app.AlertDialog.Builder(this).setTitle("Permissions Required")
             .setMessage("Permissions are required to use this app. Please enable them in app settings.")
             .setPositiveButton("OK") { dialog, _ ->
@@ -108,44 +116,66 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun accessContacts() {
-        Log.e("tag123", "function called in")
-        db.collection("contacts")
-            .get()
-            .addOnSuccessListener { documents ->
-                var syncedContacts = 0
-                val totalContacts = documents.size()
+        progressBar.visibility = ProgressBar.VISIBLE
+        progressText.visibility = TextView.VISIBLE
+        Log.e("tag123", "function called 1")
+        db.collection("contacts").get().addOnSuccessListener { documents ->
+            Log.e("tag123", "function called 2")
+
+            var syncedContacts = 0
+            val totalContacts = documents.size()
+            progressBar.max = totalContacts
+
+            runOnUiThread {
+                val progress = progressBar.progress
                 progressBar.visibility = ProgressBar.VISIBLE
                 progressText.visibility = TextView.VISIBLE
-                Log.e("tag123", "function called1")
-                for (document in documents) {
-                    val contact = document.get("contact") as? Map<*, *>
-                    val name = contact?.get("name") as? String ?: ""
-                    val phone = contact?.get("number") as? String ?: ""
+            }
+            Thread(Runnable {
+                documents.forEach { document ->
+                    Log.e("tag123", "function called 4")
 
-                    Log.e("tag123", "function inside")
-                    Log.e("tag123", "$name")
-                    Log.e("tag123", "$phone")
-                    Log.e("tag123", "$document")
+                    val contacts = document.get("contacts") as? List<Map<*, *>>
 
+                    contacts?.forEach { contact ->
+                        val name = contact["name"] as? String ?: ""
+                        val phone = contact["phone"] as? String ?: ""
 
-                    if (name.isNotEmpty() && phone.isNotEmpty()) {
-                        addContactToPhone(name, phone)
-                        syncedContacts++
-                        progressBar.visibility = ProgressBar.VISIBLE
-                        progressText.text = "Synced $syncedContacts of $totalContacts contacts"
-                        Log.e("tag123", "function not empty")
+                        if (name.isNotEmpty() && phone.isNotEmpty()) {
+                            Log.e("tag123", "function called 5")
+
+                            addContactToPhone(name, phone)
+                            syncedContacts++
+
+                            handler.post {
+                                // Update the progress text and progress bar with the current number of synced contacts
+                                progressText.text =
+                                    "$syncedContacts out of ${contacts.size} contacts synced"
+                                progressBar.progress = syncedContacts
+                            }
+                        }
                     }
                 }
-                progressBar.visibility = ProgressBar.GONE
-                progressText.text = "Sync completed. Synced $syncedContacts contacts."
-            }
-            .addOnFailureListener { exception ->
+
+                // Hide progress indicators and update the final message
+                handler.post {
+                    progressBar.visibility = ProgressBar.GONE
+                    progressText.text = "Sync completed. Synced $syncedContacts contacts."
+//                    handler.postDelayed({
+//                        progressBar.progress = 0
+//                        progressText.text = ""
+//                    }, 3000) // Delay of 3 seconds before resetting
+                }
+            }).start()
+        }.addOnFailureListener { exception ->
+            runOnUiThread {
                 progressBar.visibility = ProgressBar.GONE
                 progressText.visibility = TextView.GONE
                 progressText.text = "Sync failed. Please try again."
-                Log.e("tag123", "$exception")
-                Log.w(TAG, "Error getting documents: ", exception)
             }
+            Log.e("tag123", "$exception")
+            Log.w(TAG, "Error getting documents: ", exception)
+        }
     }
 
     private fun addContactToPhone(name: String, phone: String) {

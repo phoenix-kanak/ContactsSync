@@ -21,8 +21,10 @@
             android:id="@+id/sync_button"
             android:layout_width="142dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="12dp"
             android:background="@drawable/sync_contacts_bg"
+            android:gravity="center"
             android:padding="8dp"
             android:text="Sync Contacts"
             android:textAlignment="center"
@@ -35,10 +37,14 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="24dp"
+            android:layout_width="120dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:indeterminateTint="@color/black"
+            android:progress="0"
             android:textAlignment="center"
             android:visibility="gone" />
 
@@ -50,15 +56,17 @@
             android:layout_marginTop="8dp"
             android:text="Progress..."
             android:textAlignment="center"
-            android:textColor="#038008"
-            android:visibility="visible" />
+            android:textColor="@color/black"
+            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/delete_btn"
             android:layout_width="142dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="42dp"
             android:background="@drawable/delete_contacts_bg"
+            android:gravity="center"
             android:padding="8dp"
             android:text="Delete Contacts"
             android:textAlignment="center"
@@ -68,6 +76,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sync_button" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Delete all contacts older than a month"
+            android:textColor="@color/black" />
     </LinearLayout>
 
 

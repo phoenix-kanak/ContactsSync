@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="status_bar_colour">#3D0392</color>
+    <color name="toolbarBlue">#2196F3</color> <!-- This is a shade of blue -->
 </resources>

@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.ContactsSync" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.ContactsSync" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/toolbarBlue</item>
+        <item name="colorPrimaryDark">@color/toolbarBlue</item>
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
     </style>
 </resources>
